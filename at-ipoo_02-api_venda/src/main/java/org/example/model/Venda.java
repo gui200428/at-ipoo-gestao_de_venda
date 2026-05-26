@@ -16,10 +16,14 @@ public class Venda {
     private double valorProduto;
     private int qtd;
     private double valorTotalVenda;
+    private int funcionarioId;
+    private String funcionarioNome;
+    private String funcionarioEmail;
+    private String funcionarioTelefone;
 
     public Venda(){}
 
-    public Venda(int id, String descricao, String dataVenda, String nomeProduto, double valorProduto, int qtd, double valorTotalVenda) {
+    public Venda(int id, String descricao, String dataVenda, String nomeProduto, double valorProduto, int qtd, double valorTotalVenda, int funcionarioId, String funcionarioNome, String funcionarioEmail, String funcionarioTelefone) {
         this.id = id;
         this.descricao = descricao;
         this.dataVenda = dataVenda;
@@ -27,6 +31,10 @@ public class Venda {
         this.valorProduto = valorProduto;
         this.qtd = qtd;
         this.valorTotalVenda = valorTotalVenda;
+        this.funcionarioId = funcionarioId;
+        this.funcionarioNome = funcionarioNome;
+        this.funcionarioEmail = funcionarioEmail;
+        this.funcionarioTelefone = funcionarioTelefone;
     }
 
     public int getId() {
@@ -84,4 +92,37 @@ public class Venda {
     public void setValorTotalVenda(double valorTotalVenda) {
         this.valorTotalVenda = valorTotalVenda;
     }
+
+    public int getFuncionarioId() {
+        return funcionarioId;
+    }
+
+    public void setFuncionarioId(int funcionarioId) {
+        this.funcionarioId = funcionarioId;
+    }
+
+    public String getFuncionarioNome() {
+        return funcionarioNome;
+    }
+
+    public void setFuncionarioNome(String funcionarioNome) {
+        this.funcionarioNome = funcionarioNome;
+    }
+
+    public String getFuncionarioEmail() {
+        return funcionarioEmail;
+    }
+
+    public void setFuncionarioEmail(String funcionarioEmail) {
+        this.funcionarioEmail = funcionarioEmail;
+    }
+
+    public String getFuncionarioTelefone() {
+        return funcionarioTelefone;
+    }
+
+    public void setFuncionarioTelefone(String funcionarioTelefone) {
+        this.funcionarioTelefone = funcionarioTelefone;
+    }
 }
+
