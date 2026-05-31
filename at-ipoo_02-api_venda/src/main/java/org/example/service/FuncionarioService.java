@@ -15,13 +15,16 @@ public class FuncionarioService {
 
     public FuncionarioResponseDTO buscarFuncionarioPorId(int id) {
         String url = "http://localhost:8081/funcionarios/" + id;
-
-        FuncionarioResponseDTO funcionario = restTemplate.getForObject(url, FuncionarioResponseDTO.class);
-
-        if (funcionario == null) {
+        try {
+            FuncionarioResponseDTO funcionario = restTemplate.getForObject(url, FuncionarioResponseDTO.class);
+            if (funcionario == null) {
+                throw new RuntimeException("Funcionário não encontrado com ID: " + id);
+            }
+            return funcionario;
+        } catch (HttpClientErrorException.NotFound e) {
             throw new RuntimeException("Funcionário não encontrado com ID: " + id);
+        } catch (ResourceAccessException e) {
+            throw new RuntimeException("API de Funcionários indisponível.");
         }
-
-        return funcionario;
     }
 }
