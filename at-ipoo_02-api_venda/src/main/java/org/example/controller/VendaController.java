@@ -34,9 +34,19 @@ public class VendaController {
 
     @PostMapping
     @Operation(summary = "Cadastrar venda", description = "Cadastra uma nova venda e busca os dados do funcionário responsável na API de Funcionários")
-    public ResponseEntity<Venda> cadastrar(@RequestBody VendaRequestDTO dto){
-        Venda venda = vendaService.cadastrar(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(venda);
+    public ResponseEntity<?> cadastrar(@RequestBody VendaRequestDTO dto){
+        try {
+            Venda venda = vendaService.cadastrar(dto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(venda);
+        } catch (RuntimeException e) {
+            String msg = e.getMessage();
+            if (msg != null && msg.contains("indisponível")) {
+                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                        .body("{\"erro\": \"" + msg + "\"}");
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("{\"erro\": \"" + msg + "\"}");
+        }
     }
 
     @PutMapping("/{id}")

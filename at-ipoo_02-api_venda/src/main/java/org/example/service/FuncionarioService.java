@@ -2,6 +2,8 @@ package org.example.service;
 
 import org.example.dto.FuncionarioResponseDTO;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
