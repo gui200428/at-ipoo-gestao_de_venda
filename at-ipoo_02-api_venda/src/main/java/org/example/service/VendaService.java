@@ -48,20 +48,20 @@ public class VendaService {
     }
 
     public Venda update(int id, Venda vendaAtualizada){
-        Optional<Venda> vendaExistente = vendaRepository.findById(id);
-        if (vendaExistente.isPresent()){
-            Venda venda = vendaExistente.get();
-            venda.setDescricao(vendaAtualizada.getDescricao());
-            venda.setDataVenda(vendaAtualizada.getDataVenda());
-            venda.setNomeProduto(vendaAtualizada.getNomeProduto());
-            venda.setValorProduto(vendaAtualizada.getValorProduto());
-            venda.setQtd(vendaAtualizada.getQtd());
-            venda.setValorTotalVenda(venda.getValorProduto() * venda.getQtd());
-            return vendaRepository.save(venda);
-        }
-        return null;
+        Venda venda = vendaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Venda não encontrada com ID: " + id));
+        venda.setDescricao(vendaAtualizada.getDescricao());
+        venda.setDataVenda(vendaAtualizada.getDataVenda());
+        venda.setNomeProduto(vendaAtualizada.getNomeProduto());
+        venda.setValorProduto(vendaAtualizada.getValorProduto());
+        venda.setQtd(vendaAtualizada.getQtd());
+        venda.setValorTotalVenda(venda.getValorProduto() * venda.getQtd());
+        return vendaRepository.save(venda);
     }
     public void delete(int id){
+        if (!vendaRepository.existsById(id)) {
+            throw new RuntimeException("Venda não encontrada com ID: " + id);
+        }
         vendaRepository.deleteById(id);
     }
 }

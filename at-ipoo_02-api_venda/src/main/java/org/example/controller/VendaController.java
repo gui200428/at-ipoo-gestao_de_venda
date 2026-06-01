@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/vendas")
@@ -28,8 +27,11 @@ public class VendaController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Buscar venda por ID", description = "Retorna uma venda pelo ID")
-    public Optional<Venda> findById(@PathVariable("id") int id){
-        return vendaService.findById(id);
+    public ResponseEntity<?> findById(@PathVariable("id") int id) {
+        return vendaService.findById(id)
+                .<ResponseEntity<?>>map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("{\"erro\": \"Venda não encontrada com ID: " + id + "\"}"));
     }
 
     @PostMapping
@@ -51,13 +53,25 @@ public class VendaController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Atualizar venda", description = "Atualiza os dados de uma venda existente pelo ID")
-    public Venda update(@PathVariable("id") int id, @RequestBody Venda venda){
-        return vendaService.update(id, venda);
+    public ResponseEntity<?> update(@PathVariable("id") int id, @RequestBody Venda venda) {
+        try {
+            Venda atualizada = vendaService.update(id, venda);
+            return ResponseEntity.ok(atualizada);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("{\"erro\": \"" + e.getMessage() + "\"}");
+        }
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Deletar venda", description = "Remove uma venda pelo ID")
-    public void delete(@PathVariable("id") int id){
-        vendaService.delete(id);
+    public ResponseEntity<?> delete(@PathVariable("id") int id) {
+        try {
+            vendaService.delete(id);
+            return ResponseEntity.ok("{\"mensagem\": \"Venda com ID: " + id + " removida com sucesso\"}");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("{\"erro\": \"" + e.getMessage() + "\"}");
+        }
     }
 }

@@ -5,10 +5,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.example.model.Funcionario;
 import org.example.service.FuncionarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/funcionarios")
@@ -25,8 +26,11 @@ public class FuncionarioController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Buscar funcionário por ID", description = "Retorna um funcionário pelo ID")
-    public Optional<Funcionario> findById(@PathVariable("id") int id){
-        return funcionarioService.findById(id);
+    public ResponseEntity<?> findById(@PathVariable("id") int id) {
+        return funcionarioService.findById(id)
+                .<ResponseEntity<?>>map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("{\"erro\": \"Funcionário não encontrado com ID: " + id + "\"}"));
     }
 
     @PostMapping
@@ -37,13 +41,25 @@ public class FuncionarioController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Atualizar funcionário", description = "Atualiza os dados de um funcionário existente pelo ID")
-    public Funcionario update(@PathVariable("id") int id, @RequestBody Funcionario funcionario){
-        return funcionarioService.update(id, funcionario);
+    public ResponseEntity<?> update(@PathVariable("id") int id, @RequestBody Funcionario funcionario) {
+        try {
+            Funcionario atualizado = funcionarioService.update(id, funcionario);
+            return ResponseEntity.ok(atualizado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("{\"erro\": \"" + e.getMessage() + "\"}");
+        }
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Deletar funcionário", description = "Remove um funcionário pelo ID")
-    public void delete(@PathVariable("id") int id){
-        funcionarioService.delete(id);
+    public ResponseEntity<?> delete(@PathVariable("id") int id) {
+        try {
+            funcionarioService.delete(id);
+            return ResponseEntity.ok("{\"mensagem\": \"Funcionário com ID: " + id + " removido com sucesso\"}");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("{\"erro\": \"" + e.getMessage() + "\"}");
+        }
     }
 }
